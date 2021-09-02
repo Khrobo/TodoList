@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Todo List</title>
+        <link rel="stylesheet" href="style.css" type="text/css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <header>
+            <h1>Todo List</h1>
+            <nav>
+                <button class="bell-notif notif-btn"><i class="fas fa-bell"></i></button>
+                <button class="settings notif-btn"><i class="fas fa-cog"></i></button>
+            </nav>
+        </header>
+        <main>
+            <div class="contain">
+                <div class="list">
+                    <div class="btns">
+                        <button class="btn inbox list-btn" id="List" value="Inbox" style="background-color: grey;"><i class="fas fa-inbox"></i>Inbox 1</button>
+                    </div>
+                    <div class="btns">
+                        <button class="btn today list-btn" id="List" value="Today"><i class="fas fa-calendar-times"></i>Today 0</button>
+                    </div>
+                    <div class="btns">
+                        <button class="btn upcoming list-btn" id="List" value="Upcoming"><i class="fas fa-calendar-alt"></i>Upcoming 0</button>
+                    </div>
+                </div>
+                <div class="projects">
+                    <h2>Projects</h2>
+                    <div class="project-btns btns">
+                        <div class="garden-project">
+                            <button class="garden btn list-btn" id="Project" value="Garden"><i class="fas fa-list"></i> Garden 1</button>
+                        </div>
+                        <div class="project-add">
+                            <button class="project add btn"><i class="fas fa-plus"></i> Add Project</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="list-form" id="Inbox 1">
+                <h2 class="list-head">Inbox</h2>
+                <div id="Inbox" class="todo-list">
+                    <div class="list-item items">
+                        <div class="start">
+                            <i class="far fa-circle"></i>
+                            <p class="task-name">Pantry</p>
+                        </div>
+                        <div class="end">
+                            <button class="date-time" value="false">Date</button>
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                </div>
+                <div id="Today" class="todo-list"></div>
+                <div id="Upcoming" class="todo-list"></div>
+                <div id="Garden" class="Garden todo-list">
+                    <div class="list-item items">
+                        <div class="start">
+                            <i class="far fa-circle"></i>
+                            <p>Water the plants</p>
+                        </div>
+                        <div class="end">
+                            <button class="date-time" value="false">Date</button>
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <div class="list-item items">
+                        <div class="start">
+                            <i class="far fa-circle"></i>
+                            <p>Plant flowers</p>
+                        </div>
+                        <div class="end">
+                            <button class="date-time" value="false">Date</button>
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="add-task">
+                    <button class="task btn"><i class="fas fa-plus"></i>Add Task</button>
+                </div>
+            </div>
+            <form class="project-form">
+                <h2 class="project-head">New Project</h2>
+                <label>Title:</label>
+                <input type="text" class="project-input" placeholder="Add Project">
+                <div class="btn-pack">
+                    <button type="submit" class="add-project form-btns">Add Project</button>
+                    <button class="cancel-btn form-btns">Cancel</button>
+                </div>
+            </form>
+            <form class="task-form">
+                <h2 class="task-head">New Task</h2>
+                <label>Task:</label>
+                <input type="text" placeholder="Add Task" class="task-input">
+                <div class="btn-form">
+                    <button type="submit" class="add-tasks form-btns task-btns">Add</button>
+                    <button class="cancel-btn form-btns task-btns cancel-task">Canel</button>
+                </div>
+            </form>
+            <form class="date-form">
+                <h2 class="">Add Date</h2>
+                <label>Date:</label>
+                <input type="date" class="task-input date-input">
+                <div class="btn-form">
+                    <button type="submit" class="add-date form-btns task-btns">Add</button>
+                    <button class="cancel-btn form-btns task-btns cancel-date">Canel</button>
+                </div>
+            </form>
+        </main>
+    </body>
+    <script src="main.js"></script>
+</html>
