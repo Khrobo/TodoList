@@ -1,18 +1,20 @@
-import { todoArray, TodoProjects, TodoTasks, taskArray } from "./todolist";
-import { projectForm, taskForm, projectInput, taskInput, domLists, dateAdd } from "./events"
+import { TodoProjects, TodoTasks, taskArray, projectArray, miscArray } from "./todolist";
+import { projectForm, taskForm, taskInput, domLists, dateAdd, dateTime } from "./events"
 import { circleShader, removeTask } from "./priority"
-import { format, isEqual, isValid, isFuture} from "date-fns";
+import { format, isEqual, isValid, isFuture } from "date-fns";
 
-const savedProjects = [];
+
+const savedProjects = []; 
+// PUT SAVED ARRAYS INSIDE OF STORAGE ONCE DONE TESTING
 const savedTasks = [];
-
+let tasks;
 
 function addProjects(item) {
     const div = document.createElement("div");
     const btn = document.createElement("button");
     const i = document.createElement("i");
     const divProject = document.createElement("div");
-    const project = new TodoProjects(item.value)
+    const project = new TodoProjects(item.value);
     
     if (item.value == "") {
         alert("Enter a valid name!");
@@ -37,33 +39,35 @@ function addProjects(item) {
 
     item.value = "";
     projectForm.style.display = "none";
+    projectArray.push(project)
+    console.log("Project added here", projectArray)
+
     // Saves
-    savedProjects.push(project)
-    window.localStorage.setItem("project", JSON.stringify(savedProjects));       
-    const getProject = window.localStorage.getItem("project");
-    savedProjects.push(getProject)
-    
-    console.log("Saved project is here", savedProjects);
+    savedItems(savedProjects, project)
+
+    //
     btn.addEventListener("click", domLists);
 }
 
+function savedItems(locate ,itemName) {
+    locate.push(itemName);
+    window.localStorage.setItem("project", JSON.stringify(locate));       
+    const getProject = window.localStorage.getItem("project");
+    locate.push(getProject);
+    
+    console.log("Saved array is here", locate);
+}
+
 function taskLocater() {
-    const lists = document.querySelectorAll(".list-btn");
     const header = document.querySelector(".list-head");
     const todoList = document.querySelectorAll(".todo-list");
     const dateBtn = document.createElement("button");
 
-    for (let i = 0; i < lists.length; i++) {
-        
-            for (let j = 0; j < todoList.length; j++) { // WORKS
-                if (todoList[j].id == header.innerText) {
-                    addTasks(taskInput, todoList[j], dateBtn)
-                }
-            }
-        
+    for (let j = 0; j < todoList.length; j++) { // WORKS
+        if (todoList[j].id == header.innerText) {
+            addTasks(taskInput, todoList[j], dateBtn);
+        }
     }
-
-    
 }
 
 function addTasks(item, locate, time) { 
@@ -72,8 +76,8 @@ function addTasks(item, locate, time) {
     const iCircle = document.createElement("i");
     const iTimes = document.createElement("i");
     const startDiv = document.createElement("div");
-    const endDiv = document.createElement("div")
-
+    const endDiv = document.createElement("div");
+    const newProject = new TodoProjects(undefined, item.value); // CHECK IF THIS WORKS
     const task = new TodoTasks(item.value);
 
     if (item.value == "") {
@@ -86,7 +90,7 @@ function addTasks(item, locate, time) {
     
     locate.appendChild(divList);
     divList.appendChild(p);
-    divList.append(startDiv, endDiv); // ADD FINISHING ELEMENTS FOR OTHER APPENDS
+    divList.append(startDiv, endDiv);
     
     time.classList.add("date-time");
     startDiv.append(iCircle, p);
@@ -100,7 +104,8 @@ function addTasks(item, locate, time) {
     time.innerText = "Date";
 
     document.querySelector(".date-input").value = "";
-    time.value = false
+    tasks = item.value;
+    time.value = false;
     item.value = "";
     taskForm.style.display = "none";
     time.addEventListener("click", dateAdd);
@@ -108,76 +113,109 @@ function addTasks(item, locate, time) {
     iTimes.addEventListener("click", removeTask);
 
     taskArray.push(task); // Classes that holds the tasks and dates
-    console.log(task); 
-    console.log(taskArray);
+
+    
+    for (let i = 0; i < projectArray.length; i++) {
+        const listBtn = document.querySelectorAll(".list-btn");
+        for (let j = 0; j < listBtn.length; j++) {
+           console.log("Project Array here", projectArray[i]);
+        
+            if (listBtn[j].style.background == "grey" &&
+            listBtn[j].value == projectArray[i].title &&
+            projectArray[i].task == undefined) {
+                console.log("Task added to project");
+                projectArray[i].task = tasks;
+                console.log(projectArray);
+            } else {
+                console.log("TASK IS THERE");
+                
+                projectArray.push(newProject)
+                projectArray[i].title = listBtn[j].value;
+                projectArray[i].task = tasks;
+                console.log(projectArray)
+            }
+            
+            
+            
+        }
+    }
+
+    savedItems(savedTasks, task)
+    console.log("Saved tasks is here", savedTasks);
+    console.log(savedProjects)
 }
 
 function dateCheck(element) {
     const today = format(new Date(), "MMM-dd-yyyy");
-    const timeLists = document.querySelectorAll(".time-list");
-
-    console.log("Today Item", element)
     
-        if (isValid(new Date(element.innerText))) {
-            console.log("Valid started here!");
-            console.log(isValid(new Date(element.innerText))) // SHOWS BOTH
-            console.log(today)
-                if (isEqual(new Date(today), new Date(element.innerText))) {
-                    const todayItem = element.parentElement.parentElement.cloneNode(true);
-                    const secondItem = element.parentElement.parentElement.cloneNode(false);
-                    const listItems = document.querySelectorAll(".list-item");
-                    console.log("Another test", todayItem);
+    if (isValid(new Date(element.innerText))) {
+        const dateItem = element.parentElement.parentElement;
+        const todayElement = document.getElementById("Today");
+        const upcomingElement = document.getElementById("Upcoming");
 
-                    for (let i = 0; i < listItems.length; i++) {
-                        console.log(document.getElementById("Today").childNodes)
-                        if (document.getElementById("Today").childNodes.length == 0) {
-                            console.log("Does not exist, so add item")
-                            todayItem.cloneNode(true).className = `list-item items time-list`;
-                            document.getElementById("Today").appendChild(todayItem);
-                            console.log("First", listItems[i].querySelector(".start").querySelector("p").innerText)
-                            console.log("Middle", element.parentElement.parentElement.querySelector(".start").querySelector("p").innerText)
-                            console.log("Last", todayItem.querySelector("p").innerText)
-                        } else if (element.parentElement.parentElement.querySelector(".start").querySelector("p").innerText ==
-                        todayItem.querySelector("p").innerText) {
-                            console.log("If none are the same, then add");
-                            console.log("MMiddle", element.parentElement.parentElement.querySelector(".start").querySelector("p").innerText, element.parentElement.parentElement);
-                            console.log("LLast", todayItem.querySelector("p").innerText, todayItem);
-                            todayItem.className = `list-item items time-list`;
-                            document.getElementById("Today").appendChild(todayItem)
-                        }
-                    }
-                    
-                    
-                // SAME DATES THAT ARE ALREADY HERE ARE BEING READDED
-                
-                }
-                if (isFuture(new Date(element.innerText)) ) {
-                    console.log("UPCOMING IS TRUE");
-                    checkUpcomings(element);
-                    
-                }
+        if (isEqual(new Date(today), new Date(element.innerText))) {   
+            addDatedTasks(todayElement, dateItem);
         }
+        if (isFuture(new Date(element.innerText))) {
+            addDatedTasks(upcomingElement, dateItem);
+        }
+    }
 }
 
-function checkTodays(item) {
-    console.log("Today");
-    const todayItem = item.parentElement.parentElement.cloneNode(true);
+function addDatedTasks(locate, element) {
+    const divList = document.createElement("div");
+    const p = document.createElement("p");
+    const iCircle = document.createElement("i");
+    const iTimes = document.createElement("i");
+    const startDiv = document.createElement("div");
+    const endDiv = document.createElement("div");
+    const dateBtn = document.createElement("button");
 
-    todayItem.className = "list-item items time-list";
-    document.getElementById("Today").appendChild(todayItem);
-    
+    divList.className = "list-item items";
+    divList.dataset.name = `${tasks}`
+    startDiv.className = "start";
+    endDiv.className = "end";
+                            
+    tasks = element.querySelector("p").innerText
+    p.innerText = `${tasks}`;
+    dateBtn.innerText = format(dateTime, "MMM-dd-yyyy");
+    divList.appendChild(p);
+    divList.append(startDiv, endDiv);
+
+    // USE PROJECT CLASS TO LOOP AFTER INITIAL CHANGES
+    for (let i = 0; i < taskArray.length; i++) {
+        if (taskArray[i].task == tasks) {
+            taskArray[i].date = dateBtn.innerText;
+            console.log(taskArray[i]);
+            console.log(taskArray);
+        }
+    }
+
+    for (let i = 0; i < projectArray.length; i++) {
+        const listBtn = document.querySelectorAll(".list-btn");
+        for (let j = 0; j < listBtn.length; j++) {
+        
+            if (listBtn[j].style.background == "grey" && 
+                listBtn[j].value == projectArray[i].title) {
+                console.log("Date added to project");
+                projectArray[i].date = dateBtn.innerText;
+                console.log(projectArray);
+            }
+            
+            
+            
+        }
+    }
+
+    dateBtn.classList.add("date-time");
+    startDiv.append(iCircle, p);
+    endDiv.append(dateBtn, iTimes);
+
+    iCircle.className = `far fa-circle`;
+    iTimes.className = `fas fa-times`;
+    locate.append(divList);
+    tasks = "";
+
 }
-
-function checkUpcomings(item) {
-    console.log("Upcoming");
-    const upcomingItem = item.parentElement.parentElement.cloneNode(true);
-
-    upcomingItem.className = "list-item items time-list";
-    document.getElementById("Upcoming").appendChild(upcomingItem);
-    
-}
-
-
-
 
 export { taskLocater, addProjects, dateCheck }
