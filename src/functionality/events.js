@@ -1,7 +1,7 @@
-import { todoArray, TodoProjects } from "./todolist";
+import { projectArray, TodoProjects } from "./todolist";
 import { taskLocater, addProjects, dateCheck } from "./render"
 import { storage } from "./storage"
-import { format, isValid } from "date-fns";
+import { format } from "date-fns";
 
 const projectBtn = document.querySelector(".project");
 const projectCanel = document.querySelector(".cancel-btn");
@@ -24,12 +24,11 @@ let dateTime;
         event.preventDefault();
 
         addProjects(projectInput);
-        todoArray.push(projectTitle);
-        console.log(todoArray);
+        projectArray.push(projectTitle);
+        console.log(projectArray);
     }
     taskForm.onsubmit = event => {
         event.preventDefault();
-        console.log('Tasks submitted');
         taskLocater();
         const taskName = document.querySelector('.task-name');
     
@@ -49,7 +48,6 @@ let dateTime;
             if (dates[i].value == "true") {
                 console.log("Date is true");
                 dates[i].innerText = format(dateTime, "MMM-dd-yyyy");
-                console.log(isValid(dateTime));
                 dateCheck(dates[i])
                 
                 dates[i].value = false;
@@ -59,7 +57,6 @@ let dateTime;
         dateForm.value = ""
     }
     document.querySelector(".date-input").addEventListener("change", element => {
-        console.log(element.target.value);
         dateTime = new Date(element.target.value);
     })
     dateInput.forEach(e => e.addEventListener("click", dateAdd));
@@ -76,6 +73,7 @@ let dateTime;
         event.preventDefault();
         document.querySelector(".date-input").value = "";
         dateForm.style.display = "none"
+        dateTime = "";
     })
     projectCanel.addEventListener("click", event => {
         event.preventDefault();
@@ -86,6 +84,7 @@ let dateTime;
 
 function dateAdd(event) {
     dateForm.style.display = "block";
+    document.querySelector(".date-input").value = "";
     event.target.value = true;
 }
 
@@ -118,4 +117,4 @@ function domLists() {
     }))
 }
 
-export { domLists, projectForm, taskForm, taskInput, projectInput, dateAdd }
+export { domLists, projectForm, taskForm, taskInput, projectInput, dateAdd, dateTime }
