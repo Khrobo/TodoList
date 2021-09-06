@@ -1,6 +1,16 @@
 class TodoProjects {
-    constructor(title) {
+    constructor(title, task, date) {
         this.title = title;
+        this.task = task;
+        this.date = date;
+    }
+}
+
+class MiscTodo {
+    constructor(title, task, date) {
+        this.title = title;
+        this.task = task;
+        this.date = date;
     }
 }
 
@@ -11,10 +21,8 @@ class TodoTasks {
     }
 }
 
-
-const projects = new TodoProjects()
-const todoArray = [];
-const tasks = new TodoTasks()
+const projectArray = [];
 const taskArray = [];
+const miscArray = [];
 
-export {todoArray, TodoProjects, TodoTasks, taskArray}
+export { TodoProjects, TodoTasks, taskArray, projectArray, miscArray }
