@@ -3,7 +3,6 @@ import { projectForm, taskForm, taskInput, domLists, dateAdd, dateTime } from ".
 import { circleShader, removeTask } from "./priority"
 import { format, isEqual, isValid, isFuture } from "date-fns";
 
-
 const savedProjects = []; 
 // PUT SAVED ARRAYS INSIDE OF STORAGE ONCE DONE TESTING
 const savedTasks = [];
@@ -39,8 +38,8 @@ function addProjects(item) {
 
     item.value = "";
     projectForm.style.display = "none";
-    projectArray.push(project)
-    console.log("Project added here", projectArray)
+    projectArray.push(project);
+    console.log("Project added here", projectArray);
 
     // Saves
     savedItems(savedProjects, project)
@@ -77,7 +76,6 @@ function addTasks(item, locate, time) {
     const iTimes = document.createElement("i");
     const startDiv = document.createElement("div");
     const endDiv = document.createElement("div");
-    const newProject = new TodoProjects(undefined, item.value); // CHECK IF THIS WORKS
     const task = new TodoTasks(item.value);
 
     if (item.value == "") {
@@ -115,24 +113,35 @@ function addTasks(item, locate, time) {
     taskArray.push(task); // Classes that holds the tasks and dates
 
     
+    const listBtn = document.querySelectorAll(".list-btn");
+
     for (let i = 0; i < projectArray.length; i++) {
-        const listBtn = document.querySelectorAll(".list-btn");
+        
         for (let j = 0; j < listBtn.length; j++) {
+           const newProject = new TodoProjects(listBtn[j].value, item.value); 
            console.log("Project Array here", projectArray[i]);
         
             if (listBtn[j].style.background == "grey" &&
-            listBtn[j].value == projectArray[i].title &&
-            projectArray[i].task == undefined) {
+            projectArray[i].title == listBtn[j].value &&
+            !(projectArray[i].task)) {
+                
+
                 console.log("Task added to project");
                 projectArray[i].task = tasks;
                 console.log(projectArray);
-            } else {
-                console.log("TASK IS THERE");
+            } else if (projectArray[i].task && listBtn[j].style.background == "grey") {
+                // FIND OUT WHY IT ADDS THE SAME ONE MULTIPLE TIMES
+                if (projectArray.indexOf(projectArray[i].task) == projectArray.indexOf(projectArray[i].task)) {
+                    
+                    projectArray.push(newProject)
+                    console.log("ADD NEW TASK", projectArray);
+                } else {
+                    console.log("DIDNT WORK")
+                    return;
+                }
                 
-                projectArray.push(newProject)
-                projectArray[i].title = listBtn[j].value;
-                projectArray[i].task = tasks;
-                console.log(projectArray)
+                
+                
             }
             
             
@@ -142,7 +151,7 @@ function addTasks(item, locate, time) {
 
     savedItems(savedTasks, task)
     console.log("Saved tasks is here", savedTasks);
-    console.log(savedProjects)
+    console.log(savedProjects);
 }
 
 function dateCheck(element) {
@@ -194,16 +203,14 @@ function addDatedTasks(locate, element) {
     for (let i = 0; i < projectArray.length; i++) {
         const listBtn = document.querySelectorAll(".list-btn");
         for (let j = 0; j < listBtn.length; j++) {
-        
             if (listBtn[j].style.background == "grey" && 
-                listBtn[j].value == projectArray[i].title) {
+                listBtn[j].value == projectArray[i].title &&
+                element.querySelector(".start").querySelector(".task-name").innerText == 
+                projectArray[i].task) {
                 console.log("Date added to project");
                 projectArray[i].date = dateBtn.innerText;
                 console.log(projectArray);
             }
-            
-            
-            
         }
     }
 
