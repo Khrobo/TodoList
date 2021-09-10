@@ -1,4 +1,4 @@
-import { TodoProjects, TodoTasks, taskArray, projectArray, miscArray } from "./todolist";
+import { TodoProjects, TodoTasks, taskArray, projectArray, miscArray, MiscTodo } from "./todolist";
 import { projectForm, taskForm, taskInput, domLists, dateAdd, dateTime } from "./events"
 import { circleShader, removeTask } from "./priority"
 import { format, isEqual, isValid, isFuture } from "date-fns";
@@ -13,7 +13,7 @@ function addProjects(item) {
     const btn = document.createElement("button");
     const i = document.createElement("i");
     const divProject = document.createElement("div");
-    const project = new TodoProjects(item.value);
+    
     
     if (item.value == "") {
         alert("Enter a valid name!");
@@ -38,11 +38,10 @@ function addProjects(item) {
 
     item.value = "";
     projectForm.style.display = "none";
-    projectArray.push(project);
-    console.log("Project added here", projectArray);
+    
 
     // Saves
-    savedItems(savedProjects, project)
+    
 
     //
     btn.addEventListener("click", domLists);
@@ -77,6 +76,9 @@ function addTasks(item, locate, time) {
     const startDiv = document.createElement("div");
     const endDiv = document.createElement("div");
     const task = new TodoTasks(item.value);
+    const newProject = new TodoProjects(undefined, item.value); 
+    const miscProject = new MiscTodo()
+    const listBtn = document.querySelectorAll(".list-btn");
 
     if (item.value == "") {
         return;
@@ -111,47 +113,33 @@ function addTasks(item, locate, time) {
     iTimes.addEventListener("click", removeTask);
 
     taskArray.push(task); // Classes that holds the tasks and dates
+    projectArray.push(newProject);
 
     
-    const listBtn = document.querySelectorAll(".list-btn");
-
     for (let i = 0; i < projectArray.length; i++) {
-        
         for (let j = 0; j < listBtn.length; j++) {
-           const newProject = new TodoProjects(listBtn[j].value, item.value); 
-           console.log("Project Array here", projectArray[i]);
-        
-            if (listBtn[j].style.background == "grey" &&
-            projectArray[i].title == listBtn[j].value &&
-            !(projectArray[i].task)) {
-                
-
+            if (listBtn[j].style.background == "grey" && !(projectArray[i].task) &&
+            projectArray[i].title == undefined) {
                 console.log("Task added to project");
+                projectArray[i].title = listBtn[j].value;
                 projectArray[i].task = tasks;
                 console.log(projectArray);
-            } else if (projectArray[i].task && listBtn[j].style.background == "grey") {
-                // FIND OUT WHY IT ADDS THE SAME ONE MULTIPLE TIMES
-                if (projectArray.indexOf(projectArray[i].task) == projectArray.indexOf(projectArray[i].task)) {
-                    
-                    projectArray.push(newProject)
-                    console.log("ADD NEW TASK", projectArray);
-                } else {
-                    console.log("DIDNT WORK")
-                    return;
-                }
-                
-                
-                
-            }
-            
-            
-            
-        }
+            } else if (listBtn[j].style.background == "grey" && projectArray[i].task == projectArray[i].task &&
+            projectArray[i].title == undefined) {
+                projectArray[i].title = listBtn[j].value;
+                console.log("ADD NEW TASK", projectArray);
+            }       
+        }      
     }
 
+    for (let i = 0; i < miscArray.length; i++) {
+
+    }
+        
+    // WORK ON SAVED FUNCTIONS
     savedItems(savedTasks, task)
-    console.log("Saved tasks is here", savedTasks);
-    console.log(savedProjects);
+    
+    
 }
 
 function dateCheck(element) {
@@ -222,7 +210,6 @@ function addDatedTasks(locate, element) {
     iTimes.className = `fas fa-times`;
     locate.append(divList);
     tasks = "";
-
 }
 
 export { taskLocater, addProjects, dateCheck }
