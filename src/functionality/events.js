@@ -1,6 +1,6 @@
 import { projectArray, TodoProjects } from "./todolist";
-import { taskLocater, addProjects, dateCheck } from "./render"
-import { storage } from "./storage"
+import { taskLocater, addProjects, dateCheck } from "./render";
+import { storage } from "./storage";
 import { format } from "date-fns";
 
 const projectBtn = document.querySelector(".project");
@@ -19,13 +19,9 @@ let dateTime;
 
 (function eventListeners() {
     projectForm.onsubmit = event => {
-        const projectTitle = new TodoProjects(projectInput.value);
-            
         event.preventDefault();
 
         addProjects(projectInput);
-        projectArray.push(projectTitle);
-        console.log(projectArray);
     }
     taskForm.onsubmit = event => {
         event.preventDefault();
@@ -33,12 +29,8 @@ let dateTime;
         const taskName = document.querySelector('.task-name');
     
         if (taskName.innerText == taskInput.value) {
-            console.log("It shows");
             document.querySelector(".date-time").innerText = document.querySelector(".date-input").value
         }
-        
-        const projectTest = new TodoProjects("Food");
-        console.log(projectTest.title);
     }
     dateForm.onsubmit = event => {
         const dates = document.querySelectorAll(".date-time");
