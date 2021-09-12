@@ -1,4 +1,4 @@
-import { TodoProjects, TodoTasks, taskArray, projectArray, miscArray, MiscTodo } from "./todolist";
+import { TodoProjects, projectArray } from "./todolist";
 import { projectForm, taskForm, taskInput, domLists, dateAdd, dateTime } from "./events"
 import { circleShader, removeTask } from "./priority"
 import { format, isEqual, isValid, isFuture } from "date-fns";
@@ -8,12 +8,20 @@ const savedProjects = [];
 const savedTasks = [];
 let tasks;
 
+window.addEventListener("load", () => {
+    const inboxTodo = new TodoProjects("Inbox", "Pantry");
+    const gardenTodo = new TodoProjects("Garden", "Water the plants");
+    const gardenTodo2 = new TodoProjects("Garden", "Plant Flowers");
+
+    projectArray.push(inboxTodo, gardenTodo, gardenTodo2);
+    console.log("Loaded projects", projectArray);
+})
+
 function addProjects(item) {
     const div = document.createElement("div");
     const btn = document.createElement("button");
     const i = document.createElement("i");
     const divProject = document.createElement("div");
-    
     
     if (item.value == "") {
         alert("Enter a valid name!");
@@ -22,7 +30,7 @@ function addProjects(item) {
             
     div.className = `${item.value}`;
     document.querySelector(".project-btns").appendChild(div);
-    btn.className = "btn list-btn"
+    btn.className = "btn list-btn";
     btn.value = `${item.value}`;
     i.className = "fas fa-list";
     btn.innerText = `${item.value}`;
@@ -42,18 +50,14 @@ function addProjects(item) {
 
     // Saves
     
+    
 
     //
     btn.addEventListener("click", domLists);
 }
 
-function savedItems(locate ,itemName) {
-    locate.push(itemName);
-    window.localStorage.setItem("project", JSON.stringify(locate));       
-    const getProject = window.localStorage.getItem("project");
-    locate.push(getProject);
-    
-    console.log("Saved array is here", locate);
+function saveTodoList() {
+    window.localStorage.setItem("todo", JSON.stringify(projectArray))
 }
 
 function taskLocater() {
@@ -75,9 +79,7 @@ function addTasks(item, locate, time) {
     const iTimes = document.createElement("i");
     const startDiv = document.createElement("div");
     const endDiv = document.createElement("div");
-    const task = new TodoTasks(item.value);
-    const newProject = new TodoProjects(undefined, item.value); 
-    const miscProject = new MiscTodo()
+    const newProject = new TodoProjects(undefined, item.value);
     const listBtn = document.querySelectorAll(".list-btn");
 
     if (item.value == "") {
@@ -112,9 +114,7 @@ function addTasks(item, locate, time) {
     iCircle.addEventListener("click", circleShader);
     iTimes.addEventListener("click", removeTask);
 
-    taskArray.push(task); // Classes that holds the tasks and dates
     projectArray.push(newProject);
-
     
     for (let i = 0; i < projectArray.length; i++) {
         for (let j = 0; j < listBtn.length; j++) {
@@ -128,17 +128,16 @@ function addTasks(item, locate, time) {
             projectArray[i].title == undefined) {
                 projectArray[i].title = listBtn[j].value;
                 console.log("ADD NEW TASK", projectArray);
-            }       
+            }
         }      
     }
-
-    for (let i = 0; i < miscArray.length; i++) {
-
-    }
-        
-    // WORK ON SAVED FUNCTIONS
-    savedItems(savedTasks, task)
     
+    saveTodoList()
+    const savedList = JSON.parse(window.localStorage.getItem("todo"))
+    savedProjects.push(savedList)
+
+    // USE LOOP HERE, LOOK AT LIBRARY PROJECT FOR REFERENCE
+    console.log("After Saved", savedProjects[0])
     
 }
 
@@ -167,6 +166,7 @@ function addDatedTasks(locate, element) {
     const startDiv = document.createElement("div");
     const endDiv = document.createElement("div");
     const dateBtn = document.createElement("button");
+    const listBtn = document.querySelectorAll(".list-btn");
 
     divList.className = "list-item items";
     divList.dataset.name = `${tasks}`
@@ -179,17 +179,7 @@ function addDatedTasks(locate, element) {
     divList.appendChild(p);
     divList.append(startDiv, endDiv);
 
-    // USE PROJECT CLASS TO LOOP AFTER INITIAL CHANGES
-    for (let i = 0; i < taskArray.length; i++) {
-        if (taskArray[i].task == tasks) {
-            taskArray[i].date = dateBtn.innerText;
-            console.log(taskArray[i]);
-            console.log(taskArray);
-        }
-    }
-
     for (let i = 0; i < projectArray.length; i++) {
-        const listBtn = document.querySelectorAll(".list-btn");
         for (let j = 0; j < listBtn.length; j++) {
             if (listBtn[j].style.background == "grey" && 
                 listBtn[j].value == projectArray[i].title &&
