@@ -1,7 +1,3 @@
-import {domLists} from "./functionality/events"
+import { domLists } from "./functionality/events"
 
 domLists()
-
-
-
-
