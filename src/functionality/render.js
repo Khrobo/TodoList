@@ -1,11 +1,9 @@
 import { TodoProjects, projectArray } from "./todolist";
 import { projectForm, taskForm, taskInput, domLists, dateAdd, dateTime } from "./events"
-import { circleShader, removeTask } from "./priority"
+import { circleShader, removeTask } from "./priority";
+import { savedProjects, saveListTasks, saveListDates, saveTodoList } from "./storage";
 import { format, isEqual, isValid, isFuture } from "date-fns";
 
-const savedProjects = []; 
-// PUT SAVED ARRAYS INSIDE OF STORAGE ONCE DONE TESTING
-const savedTasks = [];
 let tasks;
 
 window.addEventListener("load", () => {
@@ -14,10 +12,10 @@ window.addEventListener("load", () => {
     const gardenTodo2 = new TodoProjects("Garden", "Plant Flowers");
 
     projectArray.push(inboxTodo, gardenTodo, gardenTodo2);
-    console.log("Loaded projects", projectArray);
+    addSavedLists() // FINSIH ADDITION
 })
 
-function addProjects(item) {
+function addProjects(item) { // ADD PROJECT SAVES
     const div = document.createElement("div");
     const btn = document.createElement("button");
     const i = document.createElement("i");
@@ -47,17 +45,7 @@ function addProjects(item) {
     item.value = "";
     projectForm.style.display = "none";
     
-
-    // Saves
-    
-    
-
-    //
     btn.addEventListener("click", domLists);
-}
-
-function saveTodoList() {
-    window.localStorage.setItem("todo", JSON.stringify(projectArray))
 }
 
 function taskLocater() {
@@ -129,16 +117,13 @@ function addTasks(item, locate, time) {
                 projectArray[i].title = listBtn[j].value;
                 console.log("ADD NEW TASK", projectArray);
             }
-        }      
+        }
     }
     
     saveTodoList()
-    const savedList = JSON.parse(window.localStorage.getItem("todo"))
-    savedProjects.push(savedList)
+    saveListTasks()
 
-    // USE LOOP HERE, LOOK AT LIBRARY PROJECT FOR REFERENCE
-    console.log("After Saved", savedProjects[0])
-    
+    console.log("After Saved", savedProjects)
 }
 
 function dateCheck(element) {
@@ -169,11 +154,11 @@ function addDatedTasks(locate, element) {
     const listBtn = document.querySelectorAll(".list-btn");
 
     divList.className = "list-item items";
-    divList.dataset.name = `${tasks}`
+    divList.dataset.name = `${tasks}`;
     startDiv.className = "start";
     endDiv.className = "end";
                             
-    tasks = element.querySelector("p").innerText
+    tasks = element.querySelector("p").innerText;
     p.innerText = `${tasks}`;
     dateBtn.innerText = format(dateTime, "MMM-dd-yyyy");
     divList.appendChild(p);
@@ -191,6 +176,9 @@ function addDatedTasks(locate, element) {
             }
         }
     }
+   
+    saveTodoList()
+    saveListDates(element, dateBtn)
 
     dateBtn.classList.add("date-time");
     startDiv.append(iCircle, p);
@@ -200,6 +188,25 @@ function addDatedTasks(locate, element) {
     iTimes.className = `fas fa-times`;
     locate.append(divList);
     tasks = "";
+}
+
+function addSavedLists() {
+    const divList = document.createElement("div");
+    const divProject = document.createElement("div");
+    const p = document.createElement("p");
+    const iCircle = document.createElement("i");
+    const iTimes = document.createElement("i");
+    const startDiv = document.createElement("div");
+    const endDiv = document.createElement("div");
+    const dateBtn = document.createElement("button");
+    const listBtn = document.querySelectorAll(".list-btn");
+    const savedLists = JSON.parse(window.localStorage.getItem("todo"))
+
+    divList.className = "list-item items";
+    startDiv.className = "start";
+    endDiv.className = "end";
+    
+    console.log(savedLists)
 }
 
 export { taskLocater, addProjects, dateCheck }
