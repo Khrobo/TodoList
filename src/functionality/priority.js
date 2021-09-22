@@ -1,5 +1,5 @@
 import { projectArray } from "./todolist";
-import { saveTodoList, saveListChecks, saveRemovedLists } from "./storage";
+import { saveTodoList, saveListChecks, saveRemovedLists, saveRemovedProjects } from "./storage";
 
 const circles = document.querySelectorAll(".fa-circle");
 const times = document.querySelectorAll(".fa-times");
@@ -9,22 +9,24 @@ const circleShader = event => {
     const findElement = event.target.parentElement.parentElement.querySelector(".start").querySelector(".task-name").innerText;
     
     event.target.classList.toggle("green");
-    saveTodoList();
-    saveListChecks(findElement);
-
+    
     for (let k = 0; k < projectArray.length; k++) {
         for (let j = 0; j < listBtn.length; j++) {
             if (listBtn[j].style.background == "grey" && 
             listBtn[j].value == projectArray[k].title && 
             findElement == projectArray[k].task && !(projectArray[k].check)) {
                 projectArray[k].check = true;
+                saveTodoList();
+                saveListChecks(findElement);
                 console.log(projectArray);
                 return;
             } else if (listBtn[j].style.background == "grey" &&
             listBtn[j].value == projectArray[k].title && 
             findElement == projectArray[k].task && projectArray[k].check == true) {
                 projectArray[k].check = false;
-                console.log("False check", projectArray)
+                saveTodoList();
+                saveListChecks(findElement);
+                console.log("False check", projectArray);
                 return;
             }
         }
@@ -34,21 +36,45 @@ const removeTask = event => {
     const findElement = event.target.parentElement.parentElement.querySelector(".start").querySelector(".task-name").innerText;
     
     event.target.parentElement.parentElement.remove();
-    saveTodoList();
-    saveRemovedLists(findElement);
+    
 
     for (let i = 0; i < projectArray.length; i++) {
         if (projectArray[i].task == findElement) {
             const findIndex = projectArray.indexOf(projectArray[i]);
             
             projectArray.splice(findIndex, 1);
+            saveTodoList();
+            saveRemovedLists(findElement);
             console.log("Spliced array", projectArray);
             return;
         }
     } 
 }
+const removeProject = event => {
+    const findProject = event.target.parentElement.parentElement.className;
+    const todoLists = document.querySelectorAll(".todo-list");
+
+    event.target.parentElement.remove();
+    
+    for (let i = 0; i < projectArray.length; i++) {
+        for (let j = 0; j < todoLists.length; j++) {
+            if (projectArray[i].title == findProject) {
+                const findIndex = projectArray.indexOf(projectArray[i]);
+                
+                if (projectArray[i].title == todoLists[j].id) todoLists[j].remove()
+                projectArray.splice(findIndex, i);
+                saveTodoList();
+                saveRemovedProjects(findProject);
+                document.querySelector(".list-head").innerText = "";
+
+                console.log("Project Removed", projectArray)
+                return
+            }
+        }
+    }
+}
 
 circles.forEach(e => e.addEventListener("click", circleShader)) 
 times.forEach(e => e.addEventListener("click", removeTask)) 
 
-export { removeTask, circleShader, circles, times }
+export { removeTask, circleShader, removeProject, circles, times }
