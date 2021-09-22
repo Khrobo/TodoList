@@ -2,21 +2,28 @@ import { projectArray } from "./todolist";
 
 const savedProjects = []; 
 
-
-
 function saveTodoList() {
     window.localStorage.setItem("todo", JSON.stringify(projectArray));
 }
 
-function saveListTasks() {
+function saveAddedProject() {
     const savedList = JSON.parse(window.localStorage.getItem("todo"));
 
     for (let list in savedList) {
         if (!savedProjects[list]) {
-            savedProjects.push(savedList[list])
+            savedProjects.push(savedList[list]);
         }
-        console.log(savedProjects);
-        console.log(savedProjects[list])
+    }
+}
+
+function saveListTasks(taskName) {
+    const savedList = JSON.parse(window.localStorage.getItem("todo"));
+
+    for (let list in savedList) {
+        if (savedProjects[list] && !savedList[list].task) {
+            savedProjects[list].task = taskName;
+            console.log("SAVED TASK", savedProjects)
+        }
     }
 }
 
@@ -29,8 +36,6 @@ function saveListDates(item, btn) {
             console.log("Date Changed")
             savedProjects[list].date = btn.innerText
         }
-        console.log(savedProjects);
-        console.log(savedProjects[list])
     }
 }
 
@@ -61,4 +66,15 @@ function saveRemovedLists(element) {
     }
 }
 
-export { savedProjects, saveListTasks, saveListDates, saveTodoList, saveListChecks, saveRemovedLists }
+function saveRemovedProjects(targetProject) {
+    for(let list in savedProjects) {
+        if (savedProjects[list].title == targetProject) {
+            const findIndex = savedProjects.indexOf(savedProjects[list]);
+
+            savedProjects.splice(findIndex, 1);
+            console.log("Check Project", savedProjects);
+        }
+    }
+}
+
+export { savedProjects, saveListTasks, saveListDates, saveTodoList, saveListChecks, saveRemovedLists, saveRemovedProjects, saveAddedProject }
