@@ -26,7 +26,6 @@ let dateTime;
         event.preventDefault();
         
         taskLocater();
-    
         if (taskName.innerText == taskInput.value) {
             document.querySelector(".date-time").innerText = document.querySelector(".date-input").value
         }
@@ -40,7 +39,6 @@ let dateTime;
                 console.log("Date is true");
                 dates[i].innerText = format(dateTime, "MMM-dd-yyyy");
                 dateCheck(dates[i])
-                
                 dates[i].value = false;
             }
         }
