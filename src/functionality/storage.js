@@ -12,6 +12,7 @@ function saveAddedProject() {
     for (let list in savedList) {
         if (!savedProjects[list]) {
             savedProjects.push(savedList[list]);
+            console.log("SAVE PROJECT", savedProjects);
         }
     }
 }
@@ -22,7 +23,7 @@ function saveListTasks(taskName) {
     for (let list in savedList) {
         if (savedProjects[list] && !savedList[list].task) {
             savedProjects[list].task = taskName;
-            console.log("SAVED TASK", savedProjects)
+            
         }
     }
 }
