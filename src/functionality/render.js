@@ -15,11 +15,11 @@ window.addEventListener("load", () => {
         const filteredLength = savedLists.filter(item => item.title == savedLists[list].title).length
         const filteredIndex = filtered[1]
 
-        if ( savedLists[list].task) {
-            addSavedLists(savedLists[list].title, savedLists[list].task, savedLists[list].date, savedLists[list].check, savedLists[list]);
+        
+        addSavedLists(savedLists[list].title, savedLists[list].task, savedLists[list].date, savedLists[list].check, savedLists[list]);
             
                 
-        }
+        
         
         console.log("FILTERED SAVE", filtered);
         // ADD FILTERED LIST AND ADD THE LIST ITEM INTO THE PROJECT
@@ -168,13 +168,32 @@ function addTasks(item, locate, time) {
 
 function dateCheck(element) {
     const today = format(new Date(), "MMM-dd-yyyy");
-    
+    console.log("COMMENCE CHECK")
     if (isValid(new Date(element.innerText))) {
         const dateItem = element.parentElement.parentElement;
         const todayElement = document.getElementById("Today");
         const upcomingElement = document.getElementById("Upcoming");
+        console.log("DATE TEST")
+        if (isEqual(new Date(today), new Date(element.innerText))) {
+            console.log("TODAY EQUAL?")   
+            addDatedTasks(todayElement, dateItem);
+        }
+        if (isFuture(new Date(element.innerText))) {
+            addDatedTasks(upcomingElement, dateItem);
+        }
+    }
+}
 
-        if (isEqual(new Date(today), new Date(element.innerText))) {   
+function savedDateCheck(element) {
+    const today = format(new Date(), "MMM-dd-yyyy");
+
+    if (isValid(new Date(element.innerText))) {
+        const dateItem = element.parentElement.parentElement;
+        const todayElement = document.getElementById("Today");
+        const upcomingElement = document.getElementById("Upcoming");
+        console.log("DATE TEST")
+        if (isEqual(new Date(today), new Date(element.innerText))) {
+            console.log("TODAY EQUAL?")   
             addDatedTasks(todayElement, dateItem);
         }
         if (isFuture(new Date(element.innerText))) {
@@ -247,11 +266,12 @@ function addSavedLists(title, task, time, check, listItem) {
     const listForm = document.querySelector(".list-form");
     const projectBtns = document.querySelector(".project-btns");
     const singleProjects = document.querySelectorAll(".project-btn");
+    const projectDates = document.querySelectorAll(".date-time");
     const savedLists = JSON.parse(window.localStorage.getItem("todo"))
 
     // Project Button
     div.className = `${title}`; //PROJECT TITLE BTN DIV
-    
+    if (div.className != title) return
     projectBtns.appendChild(div); 
     btn.className = "btn list-btn project-btn";
     btn.value = `${title}`; // PROJECT TITLE
@@ -259,9 +279,8 @@ function addSavedLists(title, task, time, check, listItem) {
     timesProject.className = "fas fa-times"
     btn.innerText = `${title}`; // PROJECT TITLE
     projectBtns.prepend(document.querySelector(".garden-project"), div)
-    
+
     div.appendChild(btn);
-    // FIX THE CSS PART FOR THE X ON THE PROJECTS SIDE
     btn.append(i, timesProject);
     btn.prepend(i, btn.value, timesProject);
     btn.lastChild.remove();
@@ -290,32 +309,46 @@ function addSavedLists(title, task, time, check, listItem) {
 
                 if (title != listForm.children[i].id) {
                     divProject.id = `${title}` // PROJECT TITLE, DIV PROJECT IS IN LIST FORM
-                    divProject.className = `${title} todo-list`; // PROJECT TITLE
+                    divProject.className = `${title} todo-list`; 
                 } else if (!listForm.children[i].hasChildNodes()) {
-                    listForm.children[i].remove()
-                    divProject.style.display = "none" // REMOVE THIS TO SEE WHERE IT IS
-                    
+                    listForm.children[i].remove(); 
+                    divProject.style.display = "none";
                     listForm.appendChild(divProject);
                     divProject.append(divList);
+                    if (task == undefined) divList.remove()
                 }
-                console.log("FILTERED", filtered) // CHECK THIS
+                if (!projectBtns.children[j].hasChildNodes()) projectBtns.children[j].remove();
                 if (projectBtns.children[j] != null && singleProjects[k].value == filtered[0].title && singleProjects[k].value != "Inbox") {
                     singleProjects[k].remove();
                 }
                 if (projectBtns.children[j].className == "Inbox") projectBtns.children[j].remove()
+                if (projectBtns.children[j].className == undefined) projectBtns.children[j].remove()
             }
         }
     }
+    
+
     listForm.prepend(document.querySelector(".list-head"), divProject);
     listForm.querySelector("#Inbox").style.display = "block";
+    
     p.innerText = task;
     p.className = "task-name";
     if (!time) dateBtn.innerText = "Date";
-    else dateBtn.innerText = time;
+    else {
+        new Date(time);
+        dateBtn.innerText = format(time, "MMM-dd-yyyy");
+        console.log("TASK DATE", dateBtn.innerText)
+        savedDateCheck(dateBtn)
 
+    // FIX TASK BEING RE ADDED INTO TODAY TAB
+    }
     if (p.innerText == task && check == true) iCircle.classList.toggle("green")
     else if (p.innerText == task && check == false) iCircle.classList.remove("green")
     
+
+    
+    
+
     btn.addEventListener("click", domLists);
     iCircle.addEventListener("click", circleShader);
     iTimes.addEventListener("click", removeTask);
