@@ -9,7 +9,6 @@ const circleShader = event => {
     const findElement = event.target.parentElement.parentElement.querySelector(".start").querySelector(".task-name").innerText;
     
     event.target.classList.toggle("green");
-    
     for (let k = 0; k < projectArray.length; k++) {
         for (let j = 0; j < listBtn.length; j++) {
             if (listBtn[j].style.background == "grey" && 
@@ -36,8 +35,6 @@ const removeTask = event => {
     const findElement = event.target.parentElement.parentElement.querySelector(".start").querySelector(".task-name").innerText;
     
     event.target.parentElement.parentElement.remove();
-    
-
     for (let i = 0; i < projectArray.length; i++) {
         if (projectArray[i].task == findElement) {
             const findIndex = projectArray.indexOf(projectArray[i]);
@@ -55,22 +52,23 @@ const removeProject = event => {
     const todoLists = document.querySelectorAll(".todo-list");
 
     event.target.parentElement.remove();
-    
     for (let i = 0; i < projectArray.length; i++) {
-        for (let j = 0; j < todoLists.length; j++) {
-            if (projectArray[i].title == findProject) {
-                const findIndex = projectArray.indexOf(projectArray[i]);
+        if (projectArray[i].title == findProject) {
+            const findIndex = projectArray.indexOf(projectArray[i]);
                 
-                if (projectArray[i].title == todoLists[j].id) todoLists[j].remove()
-                projectArray.splice(findIndex, i);
-                saveTodoList();
-                saveRemovedProjects(findProject);
-                document.querySelector(".list-head").innerText = "";
+            projectArray.splice(findIndex, i);
+            projectArray.splice(findIndex, 1);
+                
+            saveTodoList();
+            saveRemovedProjects(findProject);
 
-                console.log("Project Removed", projectArray)
-                return
-            }
-        }
+            document.querySelector(".list-head").innerText = "";
+
+            console.log("Project Removed", projectArray)
+        } 
+    }
+    for (let j = 0; j < todoLists.length; j++) {
+        if (todoLists[j].id == findProject) todoLists[j].remove()
     }
 }
 
