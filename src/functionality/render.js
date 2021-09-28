@@ -1,11 +1,10 @@
 import { TodoProjects, projectArray } from "./todolist";
 import { projectForm, taskForm, taskInput, domLists, dateAdd, dateTime } from "./events"
 import { circleShader, removeTask, removeProject } from "./priority";
-import { savedProjects, saveListTasks, saveListDates, saveTodoList, saveAddedProject } from "./storage";
+import { savedProjects, saveListTasks, saveTodoList, saveAddedProject } from "./storage";
 import { format, isEqual, isValid, isFuture } from "date-fns";
 
 let tasks;
-const arrayTest = []
 
 window.addEventListener("load", () => {
     const savedLists = JSON.parse(window.localStorage.getItem("todo"));
@@ -15,12 +14,8 @@ window.addEventListener("load", () => {
         const filteredLength = savedLists.filter(item => item.title == savedLists[list].title).length
         const filteredIndex = filtered[1]
 
-        
         addSavedLists(savedLists[list].title, savedLists[list].task, savedLists[list].date, savedLists[list].check, savedLists[list]);
             
-                
-        
-        
         console.log("FILTERED SAVE", filtered);
         // ADD FILTERED LIST AND ADD THE LIST ITEM INTO THE PROJECT
         if (filtered.length > 1) {
@@ -30,13 +25,12 @@ window.addEventListener("load", () => {
             // USE SPLICE TO REMOVE THE ITEMS savedLists.splice(filteredIndex, filteredLength)
         }
         
-        console.log("CHECK IF", savedLists)
 
         projectArray.push(savedLists[list]);
-        console.log(projectArray);
     }
     
-    console.log("SAVE?", savedLists)
+    console.log("SAVES", savedLists);
+    console.log("PROJECTS", projectArray)
 })
 
 function addProjects(item) { 
@@ -145,8 +139,8 @@ function addTasks(item, locate, time) {
                 console.log("Task added to project");
                 
                 projectArray[i].task = tasks;
-                
                 console.log(projectArray);
+                return
             }
             console.log("Loop test")
             if (listBtn[j].style.background == "grey" && projectArray[i].title == undefined &&
@@ -155,6 +149,7 @@ function addTasks(item, locate, time) {
                 
                 projectArray[i].title = listBtn[j].value;
                 projectArray[i].task = tasks;
+                
             }
         }
     }
@@ -166,43 +161,38 @@ function addTasks(item, locate, time) {
     console.log("After Saved", savedProjects)
 }
 
-function dateCheck(element) {
+function dateCheck(element, savedElement) {
     const today = format(new Date(), "MMM-dd-yyyy");
-    console.log("COMMENCE CHECK")
-    if (isValid(new Date(element.innerText))) {
-        const dateItem = element.parentElement.parentElement;
-        const todayElement = document.getElementById("Today");
-        const upcomingElement = document.getElementById("Upcoming");
-        console.log("DATE TEST")
-        if (isEqual(new Date(today), new Date(element.innerText))) {
-            console.log("TODAY EQUAL?")   
-            addDatedTasks(todayElement, dateItem);
+    const todayElement = document.getElementById("Today");
+    const upcomingElement = document.getElementById("Upcoming");
+    
+    if (element) {
+        if (isValid(new Date(element.innerText))) {
+            const dateItem = element.parentElement.parentElement;
+            if (isEqual(new Date(today), new Date(element.innerText))) {
+                console.log("TODAY EQUAL?", dateItem)
+                addDatedTasks(todayElement, dateItem, upcomingElement);
+            }
+            if (isFuture(new Date(element.innerText))) {
+                addDatedTasks(upcomingElement, dateItem, todayElement);
+                
+            }
         }
-        if (isFuture(new Date(element.innerText))) {
-            addDatedTasks(upcomingElement, dateItem);
+    }
+    if (savedElement) {
+        if (isValid(new Date(savedElement.innerText)) && savedElement) {
+            if (isEqual(new Date(today), new Date(savedElement.innerText))) {
+                console.log("Saved Equal")
+                addLoadedDates(todayElement, savedElement);
+            }
+            if (isFuture(new Date(savedElement.innerText))) {
+                addLoadedDates(upcomingElement, savedElement);
+            }
         }
     }
 }
 
-function savedDateCheck(element) {
-    const today = format(new Date(), "MMM-dd-yyyy");
-
-    if (isValid(new Date(element.innerText))) {
-        const dateItem = element.parentElement.parentElement;
-        const todayElement = document.getElementById("Today");
-        const upcomingElement = document.getElementById("Upcoming");
-        console.log("DATE TEST")
-        if (isEqual(new Date(today), new Date(element.innerText))) {
-            console.log("TODAY EQUAL?")   
-            addDatedTasks(todayElement, dateItem);
-        }
-        if (isFuture(new Date(element.innerText))) {
-            addDatedTasks(upcomingElement, dateItem);
-        }
-    }
-}
-
-function addDatedTasks(locate, element) {
+function addDatedTasks(locate, element, locateCopy) {
     const divList = document.createElement("div");
     const p = document.createElement("p");
     const iCircle = document.createElement("i");
@@ -211,18 +201,19 @@ function addDatedTasks(locate, element) {
     const endDiv = document.createElement("div");
     const dateBtn = document.createElement("button");
     const listBtn = document.querySelectorAll(".list-btn");
+    const today = format(new Date(), "MMM-dd-yyyy");
 
     divList.className = "list-item items";
-    divList.dataset.name = `${tasks}`;
     startDiv.className = "start";
     endDiv.className = "end";
-                            
+    
     tasks = element.querySelector("p").innerText;
     p.innerText = `${tasks}`;
     dateBtn.innerText = format(dateTime, "MMM-dd-yyyy");
+    
     divList.appendChild(p);
     divList.append(startDiv, endDiv);
-
+    
     for (let i = 0; i < projectArray.length; i++) {
         for (let j = 0; j < listBtn.length; j++) {
             if (listBtn[j].style.background == "grey" && 
@@ -235,14 +226,57 @@ function addDatedTasks(locate, element) {
             }
         }
     }
-   
-    saveTodoList()
-    saveListDates(element, dateBtn)
 
+    saveTodoList() 
+    
     dateBtn.classList.add("date-time");
     startDiv.append(iCircle, p);
     endDiv.append(dateBtn, iTimes);
 
+    iCircle.className = `far fa-circle`;
+    iTimes.className = `fas fa-times`;
+    console.log("Find copied", dateBtn.parentElement.parentElement.querySelector(".start"), locateCopy.children[0])
+    locate.append(divList);
+    for (let i = 0; locateCopy.childNodes.length; i++) {
+        console.log("Children", locateCopy.childNodes, tasks)
+        if (isEqual(new Date(today), new Date(dateBtn.innerText)) && locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
+            console.log("Check UPCOMING DELETE", locateCopy.childNodes[i])
+            locateCopy.childNodes[i].remove()
+            return
+        }
+        if (isFuture(new Date(dateBtn.innerText)) && locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
+            console.log("Check TODAY DELETE", locateCopy.childNodes[i])
+            locateCopy.childNodes[i].remove()
+            return
+        }
+    }
+    tasks = "";
+}
+
+function addLoadedDates(locate, dateElement) {
+    const divList = document.createElement("div");
+    const p = document.createElement("p");
+    const iCircle = document.createElement("i");
+    const iTimes = document.createElement("i");
+    const startDiv = document.createElement("div");
+    const endDiv = document.createElement("div");
+    const dateBtn = document.createElement("button");
+
+    divList.className = "list-item items";
+    startDiv.className = "start";
+    endDiv.className = "end";
+    
+    console.log("DATE ELEMENT", dateElement)
+    tasks = dateElement.parentElement.parentElement.querySelector(".start").querySelector("p").innerText;
+    p.innerText = `${tasks}`;
+    dateBtn.innerText = format(new Date(dateElement.innerText), "MMM-dd-yyyy");
+
+    divList.appendChild(p);
+    divList.append(startDiv, endDiv);
+    startDiv.append(iCircle, p);
+    endDiv.append(dateBtn, iTimes);
+    
+    dateBtn.classList.add("date-time");
     iCircle.className = `far fa-circle`;
     iTimes.className = `fas fa-times`;
     locate.append(divList);
@@ -262,12 +296,10 @@ function addSavedLists(title, task, time, check, listItem) {
     const startDiv = document.createElement("div");
     const endDiv = document.createElement("div");
     const dateBtn = document.createElement("button");
-    const listBtn = document.querySelectorAll(".list-btn");
     const listForm = document.querySelector(".list-form");
     const projectBtns = document.querySelector(".project-btns");
     const singleProjects = document.querySelectorAll(".project-btn");
-    const projectDates = document.querySelectorAll(".date-time");
-    const savedLists = JSON.parse(window.localStorage.getItem("todo"))
+    const savedLists = JSON.parse(window.localStorage.getItem("todo"));
 
     // Project Button
     div.className = `${title}`; //PROJECT TITLE BTN DIV
@@ -293,15 +325,14 @@ function addSavedLists(title, task, time, check, listItem) {
     listForm.appendChild(divProject);
     divList.appendChild(p);
     divList.append(startDiv, endDiv);
-    dateBtn.classList.add("date-time");
     startDiv.append(iCircle, p);
     endDiv.append(dateBtn, iTimes);
     
+    dateBtn.classList.add("date-time");
     iCircle.className = `far fa-circle`;
     iTimes.className = `fas fa-times`;
 
     // Project Form here
-    // USE DIV PROJECT SOMEHOW TO ADD IT AS PROJECTS TO APPEND INTO
     for (let i = 0; i < listForm.children.length; i++) {
         for (let j = 0; j < projectBtns.children.length; j++) {
             for (let k = 0; k < singleProjects.length; k++) {
@@ -315,7 +346,6 @@ function addSavedLists(title, task, time, check, listItem) {
                     divProject.style.display = "none";
                     listForm.appendChild(divProject);
                     divProject.append(divList);
-                    if (task == undefined) divList.remove()
                 }
                 if (!projectBtns.children[j].hasChildNodes()) projectBtns.children[j].remove();
                 if (projectBtns.children[j] != null && singleProjects[k].value == filtered[0].title && singleProjects[k].value != "Inbox") {
@@ -327,28 +357,23 @@ function addSavedLists(title, task, time, check, listItem) {
         }
     }
     
-
     listForm.prepend(document.querySelector(".list-head"), divProject);
     listForm.querySelector("#Inbox").style.display = "block";
     
     p.innerText = task;
     p.className = "task-name";
-    if (!time) dateBtn.innerText = "Date";
-    else {
-        new Date(time);
-        dateBtn.innerText = format(time, "MMM-dd-yyyy");
-        console.log("TASK DATE", dateBtn.innerText)
-        savedDateCheck(dateBtn)
-
-    // FIX TASK BEING RE ADDED INTO TODAY TAB
+    
+    if (task == undefined) divList.remove()
+    if (time == undefined) dateBtn.innerText = "Date";
+    else if (time != undefined) {
+        const dateText = new Date(time);
+        
+        dateBtn.innerText = format(dateText, "MMM-dd-yyyy")
+        dateCheck(undefined, dateBtn) 
     }
     if (p.innerText == task && check == true) iCircle.classList.toggle("green")
     else if (p.innerText == task && check == false) iCircle.classList.remove("green")
     
-
-    
-    
-
     btn.addEventListener("click", domLists);
     iCircle.addEventListener("click", circleShader);
     iTimes.addEventListener("click", removeTask);
