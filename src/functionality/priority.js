@@ -36,9 +36,11 @@ const removeTask = event => {
     
     event.target.parentElement.parentElement.remove();
     for (let i = 0; i < projectArray.length; i++) {
+        console.log("Test", projectArray[i], projectArray[i].title)
         if (projectArray[i].task == findElement) {
             const findIndex = projectArray.indexOf(projectArray[i]);
             
+            if (projectArray[i].title) console.log(findIndex, i)
             projectArray.splice(findIndex, 1);
             saveTodoList();
             saveRemovedLists(findElement);
@@ -63,7 +65,6 @@ const removeProject = event => {
             saveRemovedProjects(findProject);
 
             document.querySelector(".list-head").innerText = "";
-
             console.log("Project Removed", projectArray)
         } 
     }
