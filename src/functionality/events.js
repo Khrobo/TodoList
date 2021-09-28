@@ -10,7 +10,6 @@ const taskBtn = document.querySelector(".task");
 const taskCancel = document.querySelector(".cancel-task");
 const taskInput = document.querySelector(".task-input");
 const dateForm = document.querySelector(".date-form");
-const dateBtn = document.querySelector(".add-date");
 const dateCancel = document.querySelector(".cancel-date");
 const dateInput = document.querySelectorAll(".date-time");
 let dateTime;
