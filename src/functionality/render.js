@@ -16,7 +16,7 @@ window.addEventListener("load", () => {
 
         addSavedLists(savedLists[list].title, savedLists[list].task, savedLists[list].date, savedLists[list].check, savedLists[list]);
             
-        console.log("FILTERED SAVE", filtered);
+        
         // ADD FILTERED LIST AND ADD THE LIST ITEM INTO THE PROJECT
         if (filtered.length > 1) {
             console.log(filtered.length, filtered)
@@ -131,7 +131,9 @@ function addTasks(item, locate, time) {
     time.addEventListener("click", dateAdd);
     iCircle.addEventListener("click", circleShader);
     iTimes.addEventListener("click", removeTask);
-
+    
+    projectArray.push(newProject);
+    
     for (let i = 0; i < projectArray.length; i++) {
         for (let j = 0; j < listBtn.length; j++) {
             if (listBtn[j].style.background == "grey" && projectArray[i].title == listBtn[j].value &&
@@ -139,24 +141,27 @@ function addTasks(item, locate, time) {
                 console.log("Task added to project");
                 
                 projectArray[i].task = tasks;
+                saveTodoList();
+                saveListTasks(tasks);
+                
                 console.log(projectArray);
                 return
             }
             console.log("Loop test")
             if (listBtn[j].style.background == "grey" && projectArray[i].title == undefined &&
-            !projectArray[i].task) {
+            projectArray[i].task == undefined) {
                 console.log("ADD NEW TASK", projectArray);
                 
                 projectArray[i].title = listBtn[j].value;
                 projectArray[i].task = tasks;
-                
+                saveTodoList();
+                saveListTasks(tasks);
+                return
             }
         }
     }
-    projectArray.push(newProject);
     
-    saveTodoList();
-    saveListTasks(tasks);
+    
 
     console.log("After Saved", savedProjects)
 }
@@ -239,15 +244,18 @@ function addDatedTasks(locate, element, locateCopy) {
     locate.append(divList);
     for (let i = 0; locateCopy.childNodes.length; i++) {
         console.log("Children", locateCopy.childNodes, tasks)
-        if (isEqual(new Date(today), new Date(dateBtn.innerText)) && locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
+        if (isEqual(new Date(today), new Date(dateBtn.innerText))) {
             console.log("Check UPCOMING DELETE", locateCopy.childNodes[i])
-            locateCopy.childNodes[i].remove()
-            return
+            if (locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
+                locateCopy.childNodes[i].remove()
+            } else return
+            
         }
-        if (isFuture(new Date(dateBtn.innerText)) && locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
+        if (isFuture(new Date(dateBtn.innerText))) {
             console.log("Check TODAY DELETE", locateCopy.childNodes[i])
-            locateCopy.childNodes[i].remove()
-            return
+            if (locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
+                locateCopy.childNodes[i].remove();
+            } else return
         }
     }
     tasks = "";
