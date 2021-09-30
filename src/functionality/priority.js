@@ -31,23 +31,56 @@ const circleShader = event => {
         }
     }
 }
+const titleCount = {};
+const arrayTest = ["a", "a", "b", "c", "d", "d", "d"]
+    arrayTest.forEach(x => {
+                
+                titleCount[x] = (titleCount[x] || 0) + 1
+                console.log("Title names", titleCount)
+    })
+const counts = {};
+projectArray.forEach(x => {
+    console.log("Titles", x)
+    counts[x.title] = (counts[x.title] || 0) + 1;
+    console.log("After title", counts, counts[x.title]);
+})
 const removeTask = event => {
     const findElement = event.target.parentElement.parentElement.querySelector(".start").querySelector(".task-name").innerText;
+    const counts = {};
     
+    
+    // LOOK INTO USING FILTERED TO CHECK FOR ONLY ONE LIST ITEM
     event.target.parentElement.parentElement.remove();
     for (let i = 0; i < projectArray.length; i++) {
         console.log("Test", projectArray[i], projectArray[i].title)
-        if (projectArray[i].task == findElement) {
-            const findIndex = projectArray.indexOf(projectArray[i]);
-            
-            if (projectArray[i].title) console.log(findIndex, i)
-            projectArray.splice(findIndex, 1);
-            saveTodoList();
-            saveRemovedLists(findElement);
-            console.log("Spliced array", projectArray);
-            return;
-        }
-    } 
+        
+        
+            projectArray.forEach(x => {
+                console.log("Titles", x)
+                counts[x.title] = (counts[x.title] || 0) + 1;
+                console.log("After title", counts, counts[x.title])
+                if (projectArray[i].task == findElement) {
+                    
+                    if (counts[x.title] == 1) {
+                        console.log("SINGLE TASK", projectArray[i])
+                        
+                    
+                        console.log("Test", projectArray)
+
+                    } else {
+                        const findIndex = projectArray.indexOf(projectArray[i]);
+
+                        projectArray.splice(findIndex, 1);
+                        saveTodoList();
+                        saveRemovedLists(findElement);
+                        console.log("Spliced array", projectArray);
+
+                    }
+                }
+            })
+    }
+    
+
 }
 const removeProject = event => {
     const findProject = event.target.parentElement.parentElement.className;
@@ -57,7 +90,7 @@ const removeProject = event => {
     for (let i = 0; i < projectArray.length; i++) {
         if (projectArray[i].title == findProject) {
             const findIndex = projectArray.indexOf(projectArray[i]);
-                
+            
             projectArray.splice(findIndex, i);
             projectArray.splice(findIndex, 1);
                 
