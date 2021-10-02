@@ -1,8 +1,10 @@
 import { projectArray } from "./todolist";
+import { TodoProjects } from "./todolist";
 import { saveTodoList, saveListChecks, saveRemovedLists, saveRemovedProjects } from "./storage";
 
 const circles = document.querySelectorAll(".fa-circle");
 const times = document.querySelectorAll(".fa-times");
+let savedName;
 
 const circleShader = event => {
     const listBtn = document.querySelectorAll(".list-btn");
@@ -17,7 +19,6 @@ const circleShader = event => {
                 projectArray[k].check = true;
                 saveTodoList();
                 saveListChecks(findElement);
-                console.log(projectArray);
                 return;
             } else if (listBtn[j].style.background == "grey" &&
             listBtn[j].value == projectArray[k].title && 
@@ -25,62 +26,59 @@ const circleShader = event => {
                 projectArray[k].check = false;
                 saveTodoList();
                 saveListChecks(findElement);
-                console.log("False check", projectArray);
                 return;
             }
         }
     }
 }
-const titleCount = {};
-const arrayTest = ["a", "a", "b", "c", "d", "d", "d"]
-    arrayTest.forEach(x => {
-                
-                titleCount[x] = (titleCount[x] || 0) + 1
-                console.log("Title names", titleCount)
-    })
-const counts = {};
-projectArray.forEach(x => {
-    console.log("Titles", x)
-    counts[x.title] = (counts[x.title] || 0) + 1;
-    console.log("After title", counts, counts[x.title]);
-})
 const removeTask = event => {
     const findElement = event.target.parentElement.parentElement.querySelector(".start").querySelector(".task-name").innerText;
-    const counts = {};
+    const todoList = document.querySelectorAll(".todo-list");
+    const counts = [];
     
-    
-    // LOOK INTO USING FILTERED TO CHECK FOR ONLY ONE LIST ITEM
     event.target.parentElement.parentElement.remove();
-    for (let i = 0; i < projectArray.length; i++) {
-        console.log("Test", projectArray[i], projectArray[i].title)
-        
-        
-            projectArray.forEach(x => {
-                console.log("Titles", x)
-                counts[x.title] = (counts[x.title] || 0) + 1;
-                console.log("After title", counts, counts[x.title])
-                if (projectArray[i].task == findElement) {
-                    
-                    if (counts[x.title] == 1) {
-                        console.log("SINGLE TASK", projectArray[i])
-                        
-                    
-                        console.log("Test", projectArray)
 
-                    } else {
-                        const findIndex = projectArray.indexOf(projectArray[i]);
-
-                        projectArray.splice(findIndex, 1);
-                        saveTodoList();
-                        saveRemovedLists(findElement);
-                        console.log("Spliced array", projectArray);
-
-                    }
-                }
-            })
-    }
     
+    
+    for (let i = 0; i < projectArray.length; i++) {
+        
+            if (projectArray[i].task == findElement) {
+                const findIndex = projectArray.indexOf(projectArray[i]);
+                
+                
+                projectArray.splice(findIndex, 1);
+                saveTodoList();
+                saveRemovedLists(findElement);
+                console.log("Spliced array", projectArray);
+                
+            } 
+        
+    }
+    for (let j = 0; j < todoList.length; j++) {
+        if (todoList[j].id == document.querySelector(".list-head").innerText && todoList[j].hasChildNodes()) {
+            console.log("NODES", todoList[j])
+            counts.push(todoList[j])
 
+            console.log("Counts", counts)
+            for (let i = 0; i < counts.length; i++) {
+                console.log("Child Nodes", counts[i].childNodes, counts.length)
+                if (counts[i].childNodes.length == 1) {
+                    console.log("FINALLLYYYYYY", counts[i]);
+                    savedName = counts[i].id;
+                    console.log(savedName)
+                    return
+                }
+            }
+        } else if (counts.length == 0) {
+            console.log("WAA WAA", counts);
+            const addTodo = new TodoProjects(savedName);
+            // LOOK AT PROJECT AFTER YOU REMOVE THE ITEM
+            projectArray.push(addTodo);
+            console.log("Projector", projectArray);
+            saveTodoList();
+            return
+        }
+    }
 }
 const removeProject = event => {
     const findProject = event.target.parentElement.parentElement.className;
@@ -98,7 +96,6 @@ const removeProject = event => {
             saveRemovedProjects(findProject);
 
             document.querySelector(".list-head").innerText = "";
-            console.log("Project Removed", projectArray)
         } 
     }
     for (let j = 0; j < todoLists.length; j++) {
