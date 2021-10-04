@@ -8,7 +8,12 @@ let tasks;
 
 window.addEventListener("load", () => {
     const savedLists = JSON.parse(window.localStorage.getItem("todo"));
-    
+    const todayDiv = document.getElementById("Today");
+    const upcomingDiv = document.getElementById("Upcoming");
+
+    todayDiv.style.display = "none";
+    upcomingDiv.style.display = "none";
+
     for (let list in savedLists) {
         const filtered = savedLists.filter(item => item.title == savedLists[list].title)
         const filteredLength = savedLists.filter(item => item.title == savedLists[list].title).length
@@ -18,19 +23,26 @@ window.addEventListener("load", () => {
             
         
         // ADD FILTERED LIST AND ADD THE LIST ITEM INTO THE PROJECT
-        if (filtered.length > 1) {
+        
             console.log(filtered.length, filtered)
             console.log(filteredIndex)
             
             // USE SPLICE TO REMOVE THE ITEMS savedLists.splice(filteredIndex, filteredLength)
-        }
         
-
+        
         projectArray.push(savedLists[list]);
     }
-    
+    for (let i = 0; i < projectArray.length; i++) {
+        if (!projectArray[i].title && !projectArray[i].task) {
+            const index = projectArray.indexOf(projectArray[i]);
+
+            projectArray.splice(index, 2)
+
+        }
+    }
     console.log("SAVES", savedLists);
     console.log("PROJECTS", projectArray)
+
 })
 
 function addProjects(item) { 
@@ -147,7 +159,6 @@ function addTasks(item, locate, time) {
                 console.log(projectArray);
                 return
             }
-            console.log("Loop test")
             if (listBtn[j].style.background == "grey" && projectArray[i].title == undefined &&
             projectArray[i].task == undefined) {
                 console.log("ADD NEW TASK", projectArray);
