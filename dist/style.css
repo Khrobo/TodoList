@@ -173,10 +173,6 @@ span {
     margin-bottom: 1.5rem;
 }
 
-#Today, #Upcoming {
-    display: none;
-}
-
 form {
     background: #202020;
     position: absolute;
@@ -225,10 +221,6 @@ form > * {
 .add-project, .add-tasks, .add-date {
     background: green;
     border-color: transparent;
-}
-
-.Garden {
-    display: none;
 }
 
 .btn-pack {
