@@ -13,36 +13,25 @@ window.addEventListener("load", () => {
 
     todayDiv.style.display = "none";
     upcomingDiv.style.display = "none";
-
     for (let list in savedLists) {
-        const filtered = savedLists.filter(item => item.title == savedLists[list].title)
-        const filteredLength = savedLists.filter(item => item.title == savedLists[list].title).length
-        const filteredIndex = filtered[1]
-
         addSavedLists(savedLists[list].title, savedLists[list].task, savedLists[list].date, savedLists[list].check, savedLists[list]);
-            
-        
-        // ADD FILTERED LIST AND ADD THE LIST ITEM INTO THE PROJECT
-        
-            console.log(filtered.length, filtered)
-            console.log(filteredIndex)
-            
-            // USE SPLICE TO REMOVE THE ITEMS savedLists.splice(filteredIndex, filteredLength)
-        
-        
+
         projectArray.push(savedLists[list]);
+        if (!savedLists[list].title && !savedLists[list].task) {
+            const index = projectArray.indexOf(savedLists[list]);
+
+            savedLists.splice(index, 1);
+        }
     }
     for (let i = 0; i < projectArray.length; i++) {
         if (!projectArray[i].title && !projectArray[i].task) {
             const index = projectArray.indexOf(projectArray[i]);
 
-            projectArray.splice(index, 2)
-
+            projectArray.splice(index, 2);
         }
     }
     console.log("SAVES", savedLists);
     console.log("PROJECTS", projectArray)
-
 })
 
 function addProjects(item) { 
@@ -65,7 +54,7 @@ function addProjects(item) {
     i.className = "fas fa-list";
     iTimes.className = "fas fa-times";
     btn.innerText = `${item.value}`;
-    document.querySelector(".project-btns").prepend(document.querySelector(".garden-project"), div)
+    document.querySelector(".project-btns").prepend( div)
     div.appendChild(btn);
     btn.append(i, iTimes);
     btn.prepend(i, btn.value, iTimes);
@@ -329,7 +318,7 @@ function addSavedLists(title, task, time, check, listItem) {
     i.className = "fas fa-list";
     timesProject.className = "fas fa-times"
     btn.innerText = `${title}`; // PROJECT TITLE
-    projectBtns.prepend(document.querySelector(".garden-project"), div)
+    projectBtns.prepend( div)
 
     div.appendChild(btn);
     btn.append(i, timesProject);
