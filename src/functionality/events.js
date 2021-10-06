@@ -21,18 +21,14 @@ let dateTime;
         addProjects(projectInput);
     }
     taskForm.onsubmit = event => {
-        const taskName = document.querySelector('.task-name');
         event.preventDefault();
         
         taskLocater();
-        if (taskName.innerText == taskInput.value) {
-            document.querySelector(".date-time").innerText = document.querySelector(".date-input").value
-        }
     }
     dateForm.onsubmit = event => {
         const dates = document.querySelectorAll(".date-time");
+        
         event.preventDefault()
-
         for (let i = 0; i < dates.length; i++) {
             if (dates[i].value == "true") {
                 console.log("Date is true");
@@ -78,7 +74,7 @@ function dateAdd(event) {
 
 function domLists() {
     const listForm = document.querySelector(".list-form");
-        
+    
     document.querySelectorAll(".list-btn").forEach(e => e.addEventListener("click", event => {
         const listBtns = document.querySelectorAll(".list-btn");
         const todoList = document.querySelectorAll(".todo-list");
@@ -96,11 +92,12 @@ function domLists() {
                         todoList[j].style.display = "none";
                     } else {
                         todoList[j].style.display = "none";
-                        taskBtn.style.display = "block"
+                        taskBtn.style.display = "block";
                     }
                 }
             } else listBtns[i].style.background = "#EFEFEF";
             if (event.target.innerText == listForm.id) listForm.querySelector("h2").innerText = event.target.value;
+            if (document.querySelector(".list-head").innerText == "Upcoming") taskBtn.style.display = "none";
         }
     }))
 }
