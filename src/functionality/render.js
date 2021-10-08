@@ -1,7 +1,7 @@
 import { TodoProjects, projectArray } from "./todolist";
 import { projectForm, taskForm, taskInput, domLists, dateAdd, dateTime } from "./events"
 import { circleShader, removeTask, removeProject } from "./priority";
-import { savedProjects, saveListTasks, saveTodoList, saveAddedProject } from "./storage";
+import { saveListTasks, saveTodoList, saveAddedProject } from "./storage";
 import { format, isEqual, isValid, isFuture } from "date-fns";
 
 let tasks;
@@ -17,21 +17,14 @@ window.addEventListener("load", () => {
         addSavedLists(savedLists[list].title, savedLists[list].task, savedLists[list].date, savedLists[list].check, savedLists[list]);
 
         projectArray.push(savedLists[list]);
-        if (!savedLists[list].title && !savedLists[list].task) {
-            const index = projectArray.indexOf(savedLists[list]);
-
-            savedLists.splice(index, 1);
-        }
     }
     for (let i = 0; i < projectArray.length; i++) {
-        if (!projectArray[i].title && !projectArray[i].task) {
+        if (projectArray[i].title == undefined && projectArray[i].task == undefined) {
             const index = projectArray.indexOf(projectArray[i]);
 
-            projectArray.splice(index, 2);
+            projectArray.splice(index, 1);
         }
     }
-    console.log("SAVES", savedLists);
-    console.log("PROJECTS", projectArray)
 })
 
 function addProjects(item) { 
@@ -72,8 +65,6 @@ function addProjects(item) {
 
     saveTodoList();
     saveAddedProject()
-
-    console.log("ARRAY TEST", projectArray)
 
     iTimes.addEventListener("click", removeProject);
     btn.addEventListener("click", domLists);
@@ -138,20 +129,14 @@ function addTasks(item, locate, time) {
     for (let i = 0; i < projectArray.length; i++) {
         for (let j = 0; j < listBtn.length; j++) {
             if (listBtn[j].style.background == "grey" && projectArray[i].title == listBtn[j].value &&
-            !projectArray[i].task) {
-                console.log("Task added to project");
-                
+            !projectArray[i].task) {                
                 projectArray[i].task = tasks;
                 saveTodoList();
                 saveListTasks(tasks);
-                
-                console.log(projectArray);
                 return
             }
             if (listBtn[j].style.background == "grey" && projectArray[i].title == undefined &&
-            projectArray[i].task == undefined) {
-                console.log("ADD NEW TASK", projectArray);
-                
+            projectArray[i].task == undefined) {                
                 projectArray[i].title = listBtn[j].value;
                 projectArray[i].task = tasks;
                 saveTodoList();
@@ -160,10 +145,6 @@ function addTasks(item, locate, time) {
             }
         }
     }
-    
-    
-
-    console.log("After Saved", savedProjects)
 }
 
 function dateCheck(element, savedElement) {
@@ -175,19 +156,16 @@ function dateCheck(element, savedElement) {
         if (isValid(new Date(element.innerText))) {
             const dateItem = element.parentElement.parentElement;
             if (isEqual(new Date(today), new Date(element.innerText))) {
-                console.log("TODAY EQUAL?", dateItem)
                 addDatedTasks(todayElement, dateItem, upcomingElement);
             }
             if (isFuture(new Date(element.innerText))) {
                 addDatedTasks(upcomingElement, dateItem, todayElement);
-                
             }
         }
     }
     if (savedElement) {
         if (isValid(new Date(savedElement.innerText)) && savedElement) {
             if (isEqual(new Date(today), new Date(savedElement.innerText))) {
-                console.log("Saved Equal")
                 addLoadedDates(todayElement, savedElement);
             }
             if (isFuture(new Date(savedElement.innerText))) {
@@ -225,9 +203,7 @@ function addDatedTasks(locate, element, locateCopy) {
                 listBtn[j].value == projectArray[i].title &&
                 element.querySelector(".start").querySelector(".task-name").innerText == 
                 projectArray[i].task) {
-                console.log("Date added to project");
                 projectArray[i].date = dateBtn.innerText;
-                console.log(projectArray);
             }
         }
     }
@@ -240,19 +216,15 @@ function addDatedTasks(locate, element, locateCopy) {
 
     iCircle.className = `far fa-circle`;
     iTimes.className = `fas fa-times`;
-    console.log("Find copied", dateBtn.parentElement.parentElement.querySelector(".start"), locateCopy.children[0])
+
     locate.append(divList);
     for (let i = 0; locateCopy.childNodes.length; i++) {
-        console.log("Children", locateCopy.childNodes, tasks)
         if (isEqual(new Date(today), new Date(dateBtn.innerText))) {
-            console.log("Check UPCOMING DELETE", locateCopy.childNodes[i])
             if (locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
                 locateCopy.childNodes[i].remove()
             } else return
-            
         }
         if (isFuture(new Date(dateBtn.innerText))) {
-            console.log("Check TODAY DELETE", locateCopy.childNodes[i])
             if (locateCopy.childNodes[i].querySelector(".start").querySelector("p").innerText == tasks) {
                 locateCopy.childNodes[i].remove();
             } else return
@@ -274,7 +246,6 @@ function addLoadedDates(locate, dateElement) {
     startDiv.className = "start";
     endDiv.className = "end";
     
-    console.log("DATE ELEMENT", dateElement)
     tasks = dateElement.parentElement.parentElement.querySelector(".start").querySelector("p").innerText;
     p.innerText = `${tasks}`;
     dateBtn.innerText = format(new Date(dateElement.innerText), "MMM-dd-yyyy");
@@ -350,7 +321,7 @@ function addSavedLists(title, task, time, check, listItem) {
                     divProject.id = `${title}` // PROJECT TITLE, DIV PROJECT IS IN LIST FORM
                     divProject.className = `${title} todo-list`; 
                 } else if (!listForm.children[i].hasChildNodes()) {
-                    listForm.children[i].remove(); 
+                    listForm.children[i].remove();
                     divProject.style.display = "none";
                     listForm.appendChild(divProject);
                     divProject.append(divList);
