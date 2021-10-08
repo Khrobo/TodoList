@@ -42,7 +42,8 @@ const removeTask = event => {
         
         if (items[i].parentElement.id == "Today" && items[i].querySelector(".start").querySelector("p").innerText == itemText) {
             items[i].remove();
-        }
+        } else if (items[i].parentElement.id == "Upcoming") items[i].remove();
+        
     }
     event.target.parentElement.parentElement.remove();
     
@@ -53,41 +54,30 @@ const removeTask = event => {
             projectArray.splice(findIndex, 1);
             saveTodoList();
             saveRemovedLists(findElement);
-            console.log("Spliced array", projectArray);
         }
     }
     for (let j = 0; j < todoList.length; j++) {
         if (todoList[j].id == document.querySelector(".list-head").innerText && todoList[j].hasChildNodes()) {
-            console.log("NODES", todoList[j]);
             counts.push(todoList[j]);
 
-            console.log("Counts", counts)
             for (let i = 0; i < counts.length; i++) {
-                console.log("Child Nodes", counts[i].childNodes, counts.length)
                 if (counts[i].childNodes.length == 1) {
-                    console.log("FINALLLYYYYYY", counts[i]);
                     savedName = counts[i].id;
-                    console.log(savedName)
                     return
                 }
             }
         } else if (counts.length == 0 && savedName) {
-            console.log("WAA WAA", counts);
             const addProject = new TodoProjects(savedName);
 
             projectArray.push(addProject);
             for (let i = 0; i < projectArray.length; i++) {
                 if (!projectArray[i].title && !projectArray[i].task) {
-                    console.log("Missing", projectArray)
                     const index = projectArray.indexOf(projectArray[i])
         
                     projectArray.splice(index, 1)
                     saveTodoList();
-                    
-                    console.log("Found", projectArray)
                 }
             }
-            console.log("Projector", projectArray);
             saveTodoList();
             return
         } 
@@ -97,7 +87,7 @@ const removeTask = event => {
 const removeProject = event => {
     const findProject = event.target.parentElement.parentElement.className;
     const todoLists = document.querySelectorAll(".todo-list");
-    const listBtn = document.querySelectorAll(".list-btn");
+    const items = document.querySelectorAll(".list-item");
     const header = document.querySelector(".list-head");
     const projectCounts = [];
     let projectNums;
@@ -105,28 +95,28 @@ const removeProject = event => {
     for (let i = 0; i < projectArray.length; i++) {
         if (projectArray[i].title == findProject) {
             projectCounts.push(projectArray[i]);
-            console.log("Project Counts", projectCounts);
             projectNums = projectCounts.length;
         }
     }
     for (let i = 0; i < projectArray.length; i++) {
-        for (let j = 0; j < listBtn.length; j++) {
-            if (projectArray[i].title == findProject && listBtn[j].style.background == "grey" &&
-            header.innerText == findProject) {
-                const findIndex = projectArray.indexOf(projectArray[i]);
-                
-                for (let j = 0; j < todoLists.length; j++) {
-                    if (todoLists[j].id == findProject) todoLists[j].remove()
-                }
-                
-                event.target.parentElement.remove();
-                projectArray.splice(findIndex, projectNums + 1);
+        if (projectArray[i].title == findProject && header.innerText == findProject) {
+            const findIndex = projectArray.indexOf(projectArray[i]);
 
-                saveTodoList();
-                saveRemovedProjects(findProject);
-                document.querySelector(".list-head").innerText = "";
-                return
-            } 
+            for (let k = 0; k < items.length; k++) {
+                if (items[k].parentElement.id == "Today" && items[k].querySelector(".start").querySelector("p").innerText == projectArray[i].task) {
+                    items[k].remove()
+                } else if (items[k].parentElement.id == "Upcoming") items[k].remove()
+            }
+            for (let j = 0; j < todoLists.length; j++) {
+                if (todoLists[j].id == findProject) todoLists[j].remove()
+            }
+                    
+            event.target.parentElement.remove();
+            projectArray.splice(findIndex, projectNums);
+
+            saveTodoList();
+            saveRemovedProjects(findProject);
+            document.querySelector(".list-head").innerText = "";
         }
     }
 }
