@@ -31,7 +31,6 @@ let dateTime;
         event.preventDefault()
         for (let i = 0; i < dates.length; i++) {
             if (dates[i].value == "true") {
-                console.log("Date is true");
                 dates[i].innerText = format(dateTime, "MMM-dd-yyyy");
                 dateCheck(dates[i])
                 dates[i].value = false;
